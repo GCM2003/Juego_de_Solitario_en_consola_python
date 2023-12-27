@@ -1,0 +1,993 @@
+import random #importamos la librería random para desordenar la lista de las cartas de manera aleatoria
+import time
+cartas=[] #lista donde guardaremos las cartas
+
+#generamos las listas donde se guardaran las cartas corresponientes a los 7 "bonchesitos" del solitario y la pila de cartas para comer
+pila1=[] #pila 1 del tablero
+pila2=[] #pila 2 del tablero
+pila3=[] #pila 3 del tablero
+pila4=[] #pila 4 del tablero
+pila5=[] #pila 5 del tablero
+pila6=[] #pila 6 del tablero
+pila7=[] #pila 7 del tablero
+pila8=[] #pila de reservar cartas
+comida=[] #pila para comer
+
+def menu(): #menú de inicio al jugador
+  opc=7 #le damos un valor a la variable opc para iniciar un ciclo while y poder ejecutar un menú
+  while opc!=2:
+    print ("bienvenido")
+    print ("¿desea jugar?")
+    opc=int(input (" 1.-sí \n 2.-No \n"))
+    if opc==1:
+      print ("inicializando juego")
+      juego_solitario()
+    elif opc==2:
+      print ("hasta luego")
+    else:
+      print ("ingrese una opción válida")
+
+def vaciar_listas(): #en caso de que el usuario se rinda
+  cartas.clear()
+  pila1.clear()
+  pila2.clear()
+  pila3.clear()
+  pila4.clear()
+  pila5.clear()
+  pila6.clear()
+  pila7.clear()
+  pila8.clear()
+  comida.clear()
+
+def generar_cartas(): #funcion para generar cartas, generamos las cartas con ayuda de una lista de diccionarios
+    for i in range (13):  #generamos el palo de ♣es
+       cartas.append({"palo":"♣", "valor":i+1})
+    for j in range (13): #generamos el palo de ♦️
+      cartas.append({"palo":"♦️", "valor":j+1})
+    for k in range (13): #generamos el palo de ♥
+      cartas.append({"palo":"♥", "valor":k+1})
+    for l in range (13):  #generamos el palo de ♠️
+     cartas.append({"palo":"♠️", "valor":l+1})
+
+def barajear(): #funcion para barajear las cartas
+  random.shuffle(cartas) #desordenamos de manera aleatoria los elemento (los diccionarios) dentro de la lista denominada cartas
+
+def repartir_cartas():
+    for i in range(7):
+        if cartas:
+            pila7.append(cartas.pop(0))
+    for j in range(7, 13):
+        if cartas:
+            pila6.append(cartas.pop(0))
+    for k in range(13, 18):
+        if cartas:
+            pila5.append(cartas.pop(0))
+    for l in range(18, 22):
+        if cartas:
+            pila4.append(cartas.pop(0))
+    for m in range(22, 25):
+        if cartas:
+            pila3.append(cartas.pop(0))
+    for n in range(25, 27):
+        if cartas:
+            pila2.append(cartas.pop(0))
+    if cartas:
+        pila1.append(cartas.pop(0))
+    for o in range(28, 52):
+        if cartas:
+            comida.append(cartas.pop(0))
+
+def tablero(): #funcipon para imprimir un tablero
+  print ("nota:\n#1=as\n#11=J\n#12=Q\n#13=K")
+  print("Pila 1:", [f"{carta['valor']}{carta['palo']}" for carta in pila1])
+  print("Pila 2:", [f"{carta['valor']}{carta['palo']}" for carta in pila2])
+  print("Pila 3:", [f"{carta['valor']}{carta['palo']}" for carta in pila3])
+  print("Pila 4:", [f"{carta['valor']}{carta['palo']}" for carta in pila4])
+  print("Pila 5:", [f"{carta['valor']}{carta['palo']}" for carta in pila5])
+  print("Pila 6:", [f"{carta['valor']}{carta['palo']}" for carta in pila6])
+  print("Pila 7:", [f"{carta['valor']}{carta['palo']}" for carta in pila7])
+  print ("\n")
+  print (f"comida:hay {len(comida)-1} cartas para comer")
+  z=len (pila8)
+  if z==0:
+    print ("no hay cartas reservadas #pila8")
+  else:
+    print (f"pila de cartas reservadas:{pila8[-1]['valor']} de {pila8[-1]['palo']} #pila8")
+
+def comer():
+  pila8.append(comida[-1])
+  comida.pop()
+
+def mover_carta_entre_pilas(num1, num2): #funcion para mover cartas (pila de origen, pila de destino)
+  if num1==1: #en este caso la pila1 es la pila de origen
+    if num2==2: #en este caso la pila de destino es la pila 2
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        c="negro"
+      if pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        c="rojo"
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila1[-1]["valor"]==pila2[-1]["valor"]-1:
+          pila2.append(pila1[-1])
+          pila1.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==3: #en este caso la pila de destino es la pila 3
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        c="negro"
+      if pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        c="rojo"
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila1[-1]["valor"]==pila3[-1]["valor"]-1:
+          pila3.append(pila1[-1])
+          pila1.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+
+    elif num2==4: #en este caso la pila de destino es la pila 4
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        c="negro"
+      if pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        c="rojo"
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila1[-1]["valor"]==pila4[-1]["valor"]-1:
+          pila4.append(pila1[-1])
+          pila1.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==5: #en este caso la pila de destino es la pila 5
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        c="negro"
+      if pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        c="rojo"
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila1[-1]["valor"]==pila5[-1]["valor"]-1:
+          pila5.append(pila1[-1])
+          pila1.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==6: #en este caso la pila de destino es la pila 6
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        c="negro"
+      if pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        c="rojo"
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila1[-1]["valor"]==pila6[-1]["valor"]-1:
+          pila6.append(pila1[-1])
+          pila1.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==7: #en este caso la pila de destino es la pila 7
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        c="negro"
+      if pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        c="rojo"
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila1[-1]["valor"]==pila7[-1]["valor"]-1:
+          pila7.append(pila1[-1])
+          pila1.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+
+  elif num1==2: #en este caso la pila2 es la pila de origen
+    if num2==1: #en este caso la pila de destino es la pila 1
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        c="negro"
+      if pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        c="rojo"
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila2[-1]["valor"]==pila1[-1]["valor"]-1:
+          pila1.append(pila2[-1])
+          pila2.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==3 : #en este caso la pila de destino es la pila 3
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        c="negro"
+      if pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        c="rojo"
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila2[-1]["valor"]==pila3[-1]["valor"]-1:
+          pila3.append(pila2[-1])
+          pila2.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+
+    elif num2==4: #en este caso la pila de destino es la pila 4
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        c="negro"
+      if pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        c="rojo"
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila2[-1]["valor"]==pila4[-1]["valor"]-1:
+          pila4.append(pila2[-1])
+          pila2.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+
+    elif num2==5: #en este caso la pila de destino es la pila 5
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        c="negro"
+      if pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        c="rojo"
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila2[-1]["valor"]==pila5[-1]["valor"]-1:
+          pila5.append(pila2[-1])
+          pila2.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==6: #en este caso la pila de destino es la pila 6
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        c="negro"
+      if pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        c="rojo"
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila2[-1]["valor"]==pila6[-1]["valor"]-1:
+          pila6.append(pila2[-1])
+          pila2.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==7: #en este caso la pila de destino es la pila 7
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        c="negro"
+      if pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        c="rojo"
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila2[-1]["valor"]==pila7[-1]["valor"]-1:
+          pila7.append(pila2[-1])
+          pila2.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+
+  elif num1==3: #en este caso la pila3 es la pila de origen
+    if num2==1: #en este caso la pila de destino es la pila 1
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        c="negro"
+      if pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        c="rojo"
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila3[-1]["valor"]==pila1[-1]["valor"]-1:
+          pila1.append(pila3[-1])
+          pila3.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==2: #en este caso la pila de destino es la pila 2
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        c="negro"
+      if pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        c="rojo"
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila3[-1]["valor"]==pila2[-1]["valor"]-1:
+          pila2.append(pila3[-1])
+          pila3.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==4: #en este caso la pila de destino es la pila 4
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        c="negro"
+      if pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        c="rojo"
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila3[-1]["valor"]==pila4[-1]["valor"]-1:
+          pila4.append(pila3[-1])
+          pila3.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==5: #en este caso la pila de destino es la pila 5
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        c="negro"
+      if pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        c="rojo"
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila3[-1]["valor"]==pila5[-1]["valor"]-1:
+          pila5.append(pila3[-1])
+          pila3.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==6: #en este caso la pila de destino es la pila 6
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        c="negro"
+      if pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        c="rojo"
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila3[-1]["valor"]==pila6[-1]["valor"]-1:
+          pila6.append(pila3[-1])
+          pila3.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==7: #en este caso la pila de destino es la pila 7
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        c="negro"
+      if pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        c="rojo"
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila3[-1]["valor"]==pila7[-1]["valor"]-1:
+          pila7.append(pila3[-1])
+          pila3.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+
+  elif num1==4: #en este caso la pila4 es la pila de origen
+    if num2==1:#en este caso la pila de destino es la pila 1
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        c="negro"
+      if pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        c="rojo"
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila4[-1]["valor"]==pila1[-1]["valor"]-1:
+          pila1.append(pila4[-1])
+          pila4.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==2: #en este caso la pila de destino es la pila 2
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        c="negro"
+      if pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        c="rojo"
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila4[-1]["valor"]==pila2[-1]["valor"]-1:
+          pila2.append(pila4[-1])
+          pila4.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==3: #en este caso la pila de destino es la pila 3
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        c="negro"
+      if pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        c="rojo"
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila4[-1]["valor"]==pila3[-1]["valor"]-1:
+          pila3.append(pila4[-1])
+          pila4.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==5: #en este caso la pila de destino es la pila 5
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        c="negro"
+      if pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        c="rojo"
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila4[-1]["valor"]==pila5[-1]["valor"]-1:
+          pila5.append(pila4[-1])
+          pila4.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==6: #en este caso la pila de destino es la pila 6
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        c="negro"
+      if pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        c="rojo"
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila4[-1]["valor"]==pila6[-1]["valor"]-1:
+          pila6.append(pila4[-1])
+          pila4.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==7: #en este caso la pila de destino es la pila 7
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        c="negro"
+      if pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        c="rojo"
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila4[-1]["valor"]==pila7[-1]["valor"]-1:
+          pila7.append(pila4[-1])
+          pila4.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+
+  elif num1==5: #en este caso la pila5 es la pila de origen
+    if num2==1: #en este caso la pila de destino es la pila 1
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        c="negro"
+      if pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        c="rojo"
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila5[-1]["valor"]==pila1[-1]["valor"]-1:
+          pila1.append(pila5[-1])
+          pila5.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==2: #en este caso la pila de destino es la pila 2
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        c="negro"
+      if pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        c="rojo"
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila5[-1]["valor"]==pila2[-1]["valor"]-1:
+          pila2.append(pila5[-1])
+          pila5.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==3: #en este caso la pila de destino es la pila 3
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        c="negro"
+      if pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        c="rojo"
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila5[-1]["valor"]==pila3[-1]["valor"]-1:
+          pila3.append(pila5[-1])
+          pila5.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==4: #en este caso la pila de destino es la pila 4
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        c="negro"
+      if pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        c="rojo"
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila5[-1]["valor"]==pila4[-1]["valor"]-1:
+          pila4.append(pila5[-1])
+          pila5.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==6: #en este caso la pila de destino es la pila 6
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        c="negro"
+      if pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        c="rojo"
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila5[-1]["valor"]==pila6[-1]["valor"]-1:
+          pila6.append(pila5[-1])
+          pila5.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==7: #en este caso la pila de destino es la pila 7
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        c="negro"
+      if pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        c="rojo"
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila5[-1]["valor"]==pila7[-1]["valor"]-1:
+          pila7.append(pila5[-1])
+          pila5.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+
+  elif num1==6: #en este caso la pila6 es la pila de origen
+    if num2==1: #en este caso la pila de destino es la pila 1
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        c="negro"
+      if pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        c="rojo"
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila6[-1]["valor"]==pila1[-1]["valor"]-1:
+          pila1.append(pila6[-1])
+          pila6.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==2: #en este caso la pila de destino es la pila 2
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        c="negro"
+      if pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        c="rojo"
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila6[-1]["valor"]==pila2[-1]["valor"]-1:
+          pila2.append(pila6[-1])
+          pila6.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==3: #en este caso la pila de destino es la pila 3
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        c="negro"
+      if pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        c="rojo"
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila6[-1]["valor"]==pila3[-1]["valor"]-1:
+          pila3.append(pila6[-1])
+          pila6.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==4: #en este caso la pila de destino es la pila 4
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        c="negro"
+      if pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        c="rojo"
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila6[-1]["valor"]==pila4[-1]["valor"]-1:
+          pila4.append(pila6[-1])
+          pila6.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==5: #en este caso la pila de destino es la pila 5
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        c="negro"
+      if pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        c="rojo"
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila6[-1]["valor"]==pila5[-1]["valor"]-1:
+          pila5.append(pila6[-1])
+          pila6.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==7: #en este caso la pila de destino es la pila 7
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        c="negro"
+      if pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        c="rojo"
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila6[-1]["valor"]==pila7[-1]["valor"]-1:
+          pila7.append(pila6[-1])
+          pila6.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+
+  elif num1==7: #en este caso la pila7 es la pila de origen
+    if num2==1: #en este caso la pila de destino es la pila 1
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        c="negro"
+      if pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+        c="rojo"
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila1[-1]["palo"]=="diamanes" or pila1[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila7[-1]["valor"]==pila1[-1]["valor"]-1:
+          pila1.append(pila7[-1])
+          pila7.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==2: #en este caso la pila de destino es la pila 2
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        c="negro"
+      if pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+        c="rojo"
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila7[-1]["valor"]==pila2[-1]["valor"]-1:
+          pila2.append(pila7[-1])
+          pila7.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==3: #en este caso la pila de destino es la pila 3
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        c="negro"
+      if pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="corazon":
+        c="rojo"
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila7[-1]["valor"]==pila1[-1]["valor"]-1:
+          pila1.append(pila7[-1])
+          pila7.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==4:
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        c="negro"
+      if pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="corazon":
+        c="rojo"
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila7[-1]["valor"]==pila4[-1]["valor"]-1:
+          pila4.append(pila7[-1])
+          pila7.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==5:
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        c="negro"
+      if pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+        c="rojo"
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila7[-1]["valor"]==pila5[-1]["valor"]-1:
+          pila5.append(pila7[-1])
+          pila7.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==6:
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        c="negro"
+      if pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+        c="rojo"
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila7[-1]["valor"]==pila6[-1]["valor"]-1:
+          pila6.append(pila7[-1])
+          pila7.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+  elif num1==8: #en este caso la pila8 es la pila de origen
+    if num2==1:
+      if pila8[-1]["palo"]=="♣" or pila8[-1]["palo"]=="♠️":
+        c="negro"
+      if pila8[-1]["palo"]=="♦️" or pila8[-1]["palo"]=="♥":
+        c="rojo"
+      if pila1[-1]["palo"]=="♣" or pila1[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila1[-1]["palo"]=="♦️" or pila1[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila8[-1]["valor"]==pila8[-1]["valor"]-1:
+          pila1.append(pila8[-1])
+          pila8.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==2:
+      if pila8[-1]["palo"]=="♣" or pila8[-1]["palo"]=="♠️":
+        c="negro"
+      if pila8[-1]["palo"]=="♦️" or pila8[-1]["palo"]=="♥":
+        c="rojo"
+      if pila2[-1]["palo"]=="♣" or pila2[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila2[-1]["palo"]=="♦️" or pila2[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila8[-1]["valor"]==pila2[-1]["valor"]-1:
+          pila2.append(pila8[-1])
+          pila8.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==3:
+      if pila8[-1]["palo"]=="♣" or pila8[-1]["palo"]=="♠️":
+        c="negro"
+      if pila8[-1]["palo"]=="♦️" or pila8[-1]["palo"]=="♥":
+        c="rojo"
+      if pila3[-1]["palo"]=="♣" or pila3[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila3[-1]["palo"]=="♦️" or pila3[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila8[-1]["valor"]==pila8[-1]["valor"]-1:
+          pila3.append(pila8[-1])
+          pila8.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==4:
+      if pila8[-1]["palo"]=="♣" or pila8[-1]["palo"]=="♠️":
+        c="negro"
+      if pila8[-1]["palo"]=="♦️" or pila8[-1]["palo"]=="♥":
+        c="rojo"
+      if pila4[-1]["palo"]=="♣" or pila4[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila4[-1]["palo"]=="♦️" or pila4[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila8[-1]["valor"]==pila4[-1]["valor"]-1:
+          pila4.append(pila8[-1])
+          pila8.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==5:
+      if pila8[-1]["palo"]=="♣" or pila8[-1]["palo"]=="♠️":
+        c="negro"
+      if pila8[-1]["palo"]=="♦️" or pila8[-1]["palo"]=="♥":
+        c="rojo"
+      if pila5[-1]["palo"]=="♣" or pila5[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila5[-1]["palo"]=="♦️" or pila5[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila8[-1]["valor"]==pila5[-1]["valor"]-1:
+          pila5.append(pila8[-1])
+          pila8.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==6:
+      if pila8[-1]["palo"]=="♣" or pila8[-1]["palo"]=="♠️":
+        c="negro"
+      if pila8[-1]["palo"]=="♦️" or pila8[-1]["palo"]=="♥":
+        c="rojo"
+      if pila6[-1]["palo"]=="♣" or pila6[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila6[-1]["palo"]=="♦️" or pila6[-1]["palo"]=="♥":
+        d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila8[-1]["valor"]==pila6[-1]["valor"]-1:
+          pila6.append(pila8[-1])
+          pila8.pop()
+        else:
+          print ("esa carta no se puede mover a esa pila")
+    elif num2==7:
+      if pila8[-1]["palo"]=="♣" or pila8[-1]["palo"]=="♠️":
+        c="negro"
+      elif pila8[-1]["palo"]=="♦️" or pila8[-1]["palo"]=="♥":
+        c="rojo"
+      if pila7[-1]["palo"]=="♣" or pila7[-1]["palo"]=="♠️":
+        d="negro"
+      if  pila7[-1]["palo"]=="♦️" or pila7[-1]["palo"]=="♥":
+         d="rojo"
+      if c==d:
+        print ("esa carta no se puede mover a esa pila porque son del mismo color")
+      else:
+        if pila8[-1]["valor"]==pila7[-1]["valor"]-1:
+           pila7.append(pila8[-1])
+           pila8.pop()
+        else:
+           print ("esa carta no se puede mover a esa pila")
+def reglas():
+  print ("------------------------------------------------------- Reglas -------------------------------------------------------------------------------------------------")
+  print ("1.- Para poder jugar debes acomodar las cartas en orden de mayor valor a menor valor (K-As), respetando el orden de una carta roja y una negra, así sucesivamente")
+  print ("recuerda que diamante y ♥ son palos rojos, ♣es y ♠️ son palos negros")
+  print ("2.- Para poder mover una carta, selecciona en el menú de opciones la primera opción '1'")
+  print ("3.- Elige la pila de origen (la pila de la cuál vas a sacar la última carta), solo pon el número de la pila por ejemplo '1' ")
+  print ("4.- Elige la pila de destino (la pila a la cuál le vas a poner la carta), solo pon el número de la pila por ejemplo '3'")
+  print ("5.- Si no hay una carta que puedas apilar, puedes comer, solo elige la opción de 'sacar una carta' y se almacenará en la pila 8 o pila de reserva, esta pila")
+  print ("    no recibe cartas de otras pilas y solo podrás utilizar la última carta almacenada en esta pila")
+  print ("6.- si el juego es mucho para tí esta la opcion de rendirse")
+  print ("-----------------------------------------------------------------------------------------------------------------------------------------------------------------")
+
+def juego_solitario():
+  generar_cartas()
+  barajear()
+  repartir_cartas()
+  opc3=7
+  while opc3!=4:
+    tablero()
+    print ("¿que desea hacer?\n 1.-mover una carta\n 2.- sacar una carta\n 3.- ver reglas\n 4.- rendirme")
+    opc3=int(input())
+    if opc3==1:
+      print ("ingrese el número de la pila de origen: (ejemplo: 1)")
+      a=int(input())
+      print ("ingrese  el número de la pila de destino:")
+      b=int(input())
+      if a<0 or b<0 or a>8 or b>8: #confirmamos que el usuario agregue un número entre el 1 y el 7
+        print ("ingrese un número válido")
+      elif a==b:
+        print ("no se puede mover una carta a la misma pila")
+      elif b==8:
+        print ("la pila de reserva, la pila 8, no puede puede ser la pila de destino")
+      else:
+        mover_carta_entre_pilas(a,b)
+    elif opc3==2:
+      comer()
+    elif opc3==3:
+      reglas()
+    elif opc3==4:
+      vaciar_listas()
+
+menu() #llamamos a la función menú
